@@ -4,6 +4,8 @@ import {ClientError} from "../errors/clientError";
 
 const exampleRouter = express.Router();
 
+import User from "../model/User";
+
 exampleRouter.post('/someResource', async (req, res) => {
 	const data = req.body;
 
@@ -11,9 +13,16 @@ exampleRouter.post('/someResource', async (req, res) => {
 		// do something with the data
 		// ...
 
-		res.sendStatus(200);
-	}
-	catch (err) {
+		const user = new User();
+		user.name = 'raz';
+
+		const savedUser = await user.save();
+
+		const getItForFun = await User.findById(savedUser.id);
+
+		res.send(getItForFun);
+		//res.sendStatus(200);
+	} catch (err) {
 		console.error(err);
 
 		if (err instanceof NotAllowedError)
@@ -28,7 +37,6 @@ exampleRouter.post('/someResource', async (req, res) => {
 
 exampleRouter.get('/someResource/:id/otherResource', async (req, res) => {
 	const id: string = req.params.id;
-
 
 	try {
 		// send something...
